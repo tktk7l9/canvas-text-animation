@@ -3,14 +3,14 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let particleArray = [];
-let adjustX = 30;
+let adjustX = 5;
 let adjustY = 20;
 
 // handle mouse
 const mouse = {
     x: null,
     y: null,
-    radius: 150
+    radius: 100
 }
 
 window.addEventListener('mousemove', function (event) {
@@ -20,8 +20,8 @@ window.addEventListener('mousemove', function (event) {
 
 ctx.fillStyle = 'white';
 ctx.font = '10px Verdana';
-ctx.fillText('Takuya Saito', 0, 15);
-const textCoordinates = ctx.getImageData(0, 0, 100, 100);
+ctx.fillText('Takuya Saito\'s Portfolio', 0, 15);
+const textCoordinates = ctx.getImageData(0, 0, 200, 100);
 
 class Particle {
     constructor(x, y) {
@@ -55,11 +55,11 @@ class Particle {
         } else {
             if (this.x !== this.baseX) {
                 let dx = this.x - this.baseX;
-                this.x -= dx / 10;
+                this.x -= dx / 5;
             }
             if (this.y != this.baseY) {
                 let dy = this.y - this.baseY;
-                this.y -= dy / 10;
+                this.y -= dy / 5;
             }
         }
     }
@@ -86,6 +86,30 @@ function animate() {
         particleArray[i].draw();
         particleArray[i].update();
     }
+    connect();
     requestAnimationFrame(animate);
 }
 animate();
+
+function connect() {
+    let opacityValue = 1;
+    for (let a = 0; a < particleArray.length; a++){
+        for (let b = a; b < particleArray.length; b++){
+            // let dx = mouse.x - this.x;
+            // let dy = mouse.y - this.y;
+            // let distance = Math.sqrt(dx * dx + dy * dy);
+            let dx = particleArray[a].x - particleArray[b].x;
+            let dy = particleArray[a].y - particleArray[b].y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            opacityValue = 1 - (distance/50);
+            ctx.strokeStyle = 'rgba(255,255,255,' + opacityValue + ')';
+            if (distance < 25) {
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particleArray[a].x, particleArray[a].y);
+                ctx.lineTo(particleArray[b].x, particleArray[b].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
